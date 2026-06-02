@@ -74,109 +74,79 @@ export default function Features() {
   const trackRef = useRef(null)
 
   useEffect(() => {
-    let mm = gsap.matchMedia()
+    const track = trackRef.current
+    const container = containerRef.current
+    if (!track || !container) return
 
-    mm.add('(min-width: 768px)', () => {
-      const track = trackRef.current
-      const container = containerRef.current
-      if (!track || !container) return
+    const ctx = gsap.context(() => {
+      // Calculate scroll width amount dynamically based on responsive sizes
+      const getScrollAmount = () => {
+        const wrapperWidth = track.parentElement.clientWidth
+        return track.scrollWidth - wrapperWidth + (window.innerWidth >= 768 ? 0 : 32)
+      }
 
-      // Total width to scroll horizontally
-      const scrollAmount = track.scrollWidth - (container.clientWidth * 0.65) // account for the split layout width
-
-      // Pin section and translate right track horizontally
+      // Setup ScrollTrigger Pinning configuration for both desktop and mobile
       const pinTrigger = ScrollTrigger.create({
         trigger: container,
         pin: true,
         start: 'top top',
-        end: () => `+=${scrollAmount}`,
+        end: () => `+=${getScrollAmount()}`,
         scrub: 1,
         invalidateOnRefresh: true,
       })
 
-      // Timeline for horizontal scroll of track
+      // Setup Horizontal translation scroll timeline
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: container,
           start: 'top top',
-          end: () => `+=${scrollAmount}`,
+          end: () => `+=${getScrollAmount()}`,
           scrub: 1,
           invalidateOnRefresh: true,
         }
       })
 
       tl.to(track, {
-        x: () => -scrollAmount,
+        x: () => -getScrollAmount(),
         ease: 'none'
       })
 
-      // Animate active cards scale/opacity based on viewport focus area
+      // Animate active card scales and shadows as they glide through viewport focus
       const cards = gsap.utils.toArray('.gsap-horizontal-card')
       cards.forEach((card) => {
         gsap.fromTo(
           card,
           {
-            scale: 0.95,
+            scale: 0.94,
             opacity: 0.6,
             filter: 'blur(1px)'
           },
           {
-            scale: 1.05,
+            scale: 1.03,
             opacity: 1,
             filter: 'blur(0px)',
             ease: 'sine.inOut',
             scrollTrigger: {
               trigger: card,
-              containerAnimation: tl, // Bind to horizontal translation timeline
-              start: 'left 60%',
-              end: 'right 40%',
+              containerAnimation: tl,
+              start: 'left 65%',
+              end: 'right 35%',
               scrub: true,
             }
           }
         )
       })
-
-      return () => {
-        pinTrigger.kill()
-        tl.kill()
-        ScrollTrigger.getAll().forEach(t => t.kill())
-      }
-    })
-
-    mm.add('(max-width: 767px)', () => {
-      // Mobile stacked layout entry triggers
-      const cards = gsap.utils.toArray('.gsap-horizontal-card')
-      cards.forEach((card, idx) => {
-        gsap.fromTo(
-          card,
-          {
-            opacity: 0,
-            y: 40,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 85%',
-              toggleActions: 'play none none none'
-            }
-          }
-        )
-      })
-    })
+    }, containerRef)
 
     return () => {
-      mm.revert()
+      ctx.revert()
       ScrollTrigger.getAll().forEach(t => t.kill())
     }
   }, [])
 
-  // Tactile 3D Tilt Hover calculations (reused from initial design for premium interaction)
+  // Tactile 3D Tilt Hover calculations
   const handleMouseMove = (e, cardEl) => {
-    if (!cardEl) return
+    if (!cardEl || window.innerWidth < 768) return
     const rect = cardEl.getBoundingClientRect()
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
@@ -184,13 +154,13 @@ export default function Features() {
     const relX = (x / rect.width) - 0.5
     const relY = (y / rect.height) - 0.5
 
-    const tiltX = -relY * 10
-    const tiltY = relX * 10
+    const tiltX = -relY * 8
+    const tiltY = relX * 8
 
     gsap.to(cardEl, {
       rotateX: tiltX,
       rotateY: tiltY,
-      z: 8,
+      z: 6,
       transformPerspective: 800,
       ease: 'power2.out',
       duration: 0.3
@@ -198,7 +168,7 @@ export default function Features() {
   }
 
   const handleMouseLeave = (cardEl) => {
-    if (!cardEl) return
+    if (!cardEl || window.innerWidth < 768) return
     gsap.to(cardEl, {
       rotateX: 0,
       rotateY: 0,
@@ -211,7 +181,7 @@ export default function Features() {
   return (
     <section
       ref={containerRef}
-      className="w-full bg-bg-subtle py-16 md:py-0 md:h-screen relative overflow-hidden flex flex-col justify-center font-body select-none"
+      className="w-full bg-bg-subtle h-screen relative overflow-hidden flex flex-col md:flex-row justify-center font-body select-none"
     >
       {/* Background smooth ambient green glows */}
       <div className="absolute top-1/2 left-2/3 -translate-y-1/2 w-[550px] h-[550px] bg-green-light/45 rounded-full blur-[140px] pointer-events-none z-0" />
@@ -219,43 +189,43 @@ export default function Features() {
 
       <div className="max-width-container w-full h-full flex flex-col md:flex-row items-center md:items-stretch relative z-10">
         
-        {/* Left Side: Pinned/Static Header Block on desktop */}
-        <div className="w-full md:w-[35%] lg:w-[30%] flex flex-col justify-center text-left py-8 md:py-0 md:pr-8 border-b md:border-b-0 md:border-r border-[#E4EAE4]/60 shrink-0 bg-bg-subtle/80 backdrop-blur-sm md:backdrop-blur-none z-20">
-          <span className="text-[12px] font-semibold text-green-accent uppercase tracking-widest block mb-4">
+        {/* Left/Top Header Block: 28vh height on mobile, full height on desktop */}
+        <div className="w-full md:w-[35%] lg:w-[30%] h-[28vh] md:h-full flex flex-col justify-center text-left px-8 md:px-0 md:pr-8 border-b md:border-b-0 md:border-r border-[#E4EAE4]/60 shrink-0 bg-bg-subtle/80 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none z-20">
+          <span className="text-[11px] sm:text-[12px] font-semibold text-green-accent uppercase tracking-widest block mb-2 md:mb-4">
             What You Get
           </span>
-          <h2 className="font-display font-normal text-text-primary text-[clamp(36px,4vw,52px)] leading-[1.12] mb-6">
+          <h2 className="font-display font-normal text-text-primary text-[clamp(28px,4vw,52px)] leading-[1.12] mb-2 md:mb-6">
             Everything therapy should have always been.
           </h2>
-          <p className="text-[15px] text-text-secondary leading-relaxed font-light hidden md:block">
+          <p className="text-[14px] md:text-[15px] text-text-secondary leading-relaxed font-light hidden md:block">
             Scroll down to explore how Hovio bridges human empathy with continuous AI support to keep you covered 24/7.
           </p>
         </div>
 
-        {/* Right Side: Horizontal scrolling track wrapper */}
-        <div className="w-full md:w-[65%] lg:w-[70%] h-full flex items-center overflow-x-hidden relative md:pl-12 py-10 md:py-0">
+        {/* Right/Bottom Track Wrapper: 72vh height on mobile, full height on desktop */}
+        <div className="w-full md:w-[65%] lg:w-[70%] h-[72vh] md:h-full flex items-center overflow-x-hidden relative md:pl-12 py-4 md:py-0">
           <div
             ref={trackRef}
-            className="flex gap-8 items-center px-4 md:px-0 overflow-x-visible whitespace-nowrap md:whitespace-normal [perspective:1200px]"
+            className="flex gap-6 sm:gap-8 items-center px-6 md:px-0 overflow-x-visible whitespace-nowrap md:whitespace-normal [perspective:1200px]"
           >
             {FEATURES.map((feature, idx) => (
               <div
                 key={idx}
                 onMouseMove={(e) => handleMouseMove(e, e.currentTarget)}
                 onMouseLeave={(e) => handleMouseLeave(e, e.currentTarget)}
-                className="gsap-horizontal-card inline-block md:block w-[300px] sm:w-[340px] md:w-[385px] bg-white border border-[#E4EAE4] rounded-[24px] p-8 md:p-10 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-colors duration-300 hover:border-green-accent flex-col items-start gap-6 cursor-pointer shrink-0 will-change-transform [transform-style:preserve-3d]"
+                className="gsap-horizontal-card inline-block md:block w-[260px] sm:w-[320px] md:w-[385px] bg-white border border-[#E4EAE4] rounded-[24px] p-6 sm:p-8 md:p-10 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-colors duration-300 hover:border-green-accent flex-col items-start gap-4 sm:gap-6 cursor-pointer shrink-0 will-change-transform [transform-style:preserve-3d]"
               >
                 {/* Icon Circle Container */}
-                <div className="w-12 h-12 rounded-full bg-green-light flex items-center justify-center shrink-0 mb-6 [transform:translateZ(15px)]">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-light flex items-center justify-center shrink-0 mb-4 sm:mb-6 [transform:translateZ(15px)]">
                   {feature.icon}
                 </div>
 
                 {/* Text Block */}
                 <div className="text-left [transform:translateZ(10px)] whitespace-normal">
-                  <h3 className="font-display font-normal text-[22px] md:text-[24px] text-text-primary mb-3">
+                  <h3 className="font-display font-normal text-[20px] sm:text-[22px] md:text-[24px] text-text-primary mb-2 sm:mb-3">
                     {feature.title}
                   </h3>
-                  <p className="text-[14px] md:text-[15px] text-text-secondary leading-relaxed font-light">
+                  <p className="text-[13px] sm:text-[14px] md:text-[15px] text-text-secondary leading-relaxed font-light">
                     {feature.body}
                   </p>
                 </div>
