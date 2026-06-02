@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react'
 
 export default function Navbar() {
@@ -59,13 +60,12 @@ export default function Navbar() {
 
         {/* Right (Desktop): Links & Join Button */}
         <div className="hidden md:flex items-center gap-8">
-          <a
-            href="#blog"
-            onClick={(e) => e.preventDefault()}
+          <Link
+            to="/blog"
             className="text-[14px] font-medium text-text-secondary hover:text-text-primary transition-colors font-body"
           >
             Blog
-          </a>
+          </Link>
           <motion.a
             href="#join"
             onClick={scrollToWaitlist}
@@ -98,16 +98,13 @@ export default function Navbar() {
             className="absolute top-16 left-0 right-0 bg-white/97 backdrop-blur-[20px] z-40 border-b border-border shadow-lg flex flex-col overflow-hidden"
           >
             <div className="flex flex-col gap-5 px-6 py-6 font-body">
-              <a
-                href="#blog"
-                onClick={(e) => {
-                  e.preventDefault()
-                  setIsMobileMenuOpen(false)
-                }}
+              <Link
+                to="/blog"
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="text-base font-medium text-text-secondary hover:text-text-primary py-1.5 transition-colors border-b border-border/40"
               >
                 Blog
-              </a>
+              </Link>
               <button
                 onClick={scrollToWaitlist}
                 className="w-full flex items-center justify-center py-3 text-[14px] font-medium text-white bg-green-primary rounded-xl hover:bg-[#154626] transition-colors"
