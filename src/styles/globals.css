@@ -1,3 +1,5 @@
+@import 'highlight.js/styles/github.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -75,4 +77,91 @@ h1, h2, h3 {
 
 .active-pulse-dot {
   animation: logPulse 2s infinite ease-in-out;
+}
+
+/* Editorial Blog Prose Styles */
+.prose-hovio {
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.85;
+  color: var(--text-secondary);
+}
+
+.prose-hovio p {
+  margin-bottom: 1.6em;
+}
+
+.prose-hovio h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--text-primary);
+  margin-top: 2.4em;
+  margin-bottom: 0.8em;
+  line-height: 1.2;
+}
+
+.prose-hovio h3 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text-primary);
+  margin-top: 2em;
+  margin-bottom: 0.6em;
+}
+
+.prose-hovio strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.prose-hovio em {
+  font-style: italic;
+  color: var(--text-primary);
+}
+
+.prose-hovio blockquote {
+  border-left: 3px solid var(--green-accent);
+  padding-left: 24px;
+  margin: 2em 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-style: italic;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.prose-hovio ul, .prose-hovio ol {
+  margin: 1.4em 0;
+  padding-left: 1.6em;
+}
+
+.prose-hovio li {
+  margin-bottom: 0.6em;
+}
+
+.prose-hovio a {
+  color: var(--green-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--green-muted);
+  text-underline-offset: 3px;
+}
+
+.prose-hovio a:hover {
+  text-decoration-color: var(--green-primary);
+}
+
+.prose-hovio code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  background: var(--green-light);
+  color: var(--green-primary);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.prose-hovio hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 3em 0;
 }

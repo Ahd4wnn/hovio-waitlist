@@ -22,6 +22,8 @@ export default function Navbar() {
       element.scrollIntoView({ behavior: 'smooth', block: 'center' })
       const input = element.querySelector('input')
       if (input) input.focus()
+    } else {
+      window.location.href = '/#join'
     }
   }
 

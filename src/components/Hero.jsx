@@ -19,7 +19,7 @@ export default function Hero() {
   const springX = useSpring(mouseX, springConfig)
   const springY = useSpring(mouseY, springConfig)
 
-  // Fetch count from Supabase
+  // Fetch count from Supabase & check redirection hash scroll
   useEffect(() => {
     let active = true
     const fetchCount = async () => {
@@ -35,6 +35,19 @@ export default function Hero() {
       }
     }
     fetchCount()
+
+    // Smooth scroll hash fallback trigger
+    if (window.location.hash === '#join') {
+      setTimeout(() => {
+        const element = document.getElementById('hero-waitlist-form')
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          const input = element.querySelector('input')
+          if (input) input.focus()
+        }
+      }, 500)
+    }
+
     return () => {
       active = false
     }
