@@ -64,7 +64,7 @@ export default function Footer() {
             <a href="/" className="flex items-center gap-2 group self-start">
               <div className="w-8 h-8 flex items-center justify-center overflow-hidden">
                 <img 
-                  src="/logo.svg" 
+                  src="/logo.jpg" 
                   alt="Hovio Logo" 
                   className="w-full h-full object-contain"
                 />

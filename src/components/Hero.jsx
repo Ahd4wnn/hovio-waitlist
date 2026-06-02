@@ -161,99 +161,85 @@ export default function Hero() {
             Hovio connects you with certified therapists chosen by AI — and stays by your side whenever you need it, 24/7.
           </motion.p>
 
-          {/* Grid Swapping Layout */}
-          <div className="w-full flex flex-col gap-10">
+          {/* Email capturing captures */}
+          <div className="w-full flex flex-col items-center">
             
-            {/* StatusLog Progress Card (order-5 on mobile, order-4 on desktop) */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
+            <motion.form
+              id="hero-waitlist-form"
+              onSubmit={handleSubmit}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 1.1 }}
-              className="w-full order-5 md:order-4"
+              transition={{ duration: 0.6, delay: 1.1 }}
+              className="w-full max-w-[480px] flex flex-col sm:flex-row gap-3"
             >
-              <StatusLog />
-            </motion.div>
-
-            {/* Email capturing captures (order-4 on mobile, order-5 on desktop) */}
-            <div className="w-full order-4 md:order-5 flex flex-col items-center">
-              
-              <motion.form
-                id="hero-waitlist-form"
-                onSubmit={handleSubmit}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.3 }}
-                className="w-full max-w-[480px] flex flex-col sm:flex-row gap-3"
-              >
-                <div className="flex-1 relative">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={status === 'loading' || status === 'success'}
-                    placeholder="your@email.com"
-                    className="w-full px-[18px] h-[52px] bg-white text-text-primary border border-[#E4EAE4] focus:border-green-accent rounded-xl outline-none font-body text-[16px] transition-colors"
-                    required
-                  />
-                </div>
-
-                <motion.button
-                  ref={buttonRef}
-                  type="submit"
+              <div className="flex-1 relative">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   disabled={status === 'loading' || status === 'success'}
-                  onMouseMove={handleMouseMove}
-                  onMouseLeave={handleMouseLeave}
-                  style={{ x: springX, y: springY }}
-                  className="h-[52px] px-[28px] bg-green-primary hover:bg-[#154626] disabled:bg-green-primary/80 text-white font-medium font-body rounded-xl text-[15px] flex items-center justify-center gap-2 transition-colors relative overflow-hidden shrink-0 shadow-md"
-                >
-                  {status === 'loading' ? (
-                    <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                  ) : (
-                    'Join the waitlist'
-                  )}
-                </motion.button>
-              </motion.form>
-
-              {/* Status notifications */}
-              <div className="h-6 mt-3.5">
-                <AnimatePresence mode="wait">
-                  {status === 'success' && (
-                    <motion.p
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 5 }}
-                      className="text-green-primary text-[14px] font-medium font-body"
-                    >
-                      You're on the list 🌿 We'll be in touch.
-                    </motion.p>
-                  )}
-                  {status === 'error' && (
-                    <motion.p
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 5 }}
-                      className="text-red-600 text-[14px] font-medium font-body"
-                    >
-                      {errorMessage}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
+                  placeholder="your@email.com"
+                  className="w-full px-[18px] h-[52px] bg-white text-text-primary border border-[#E4EAE4] focus:border-green-accent rounded-xl outline-none font-body text-[16px] transition-colors"
+                  required
+                />
               </div>
 
-              {/* Social Proof count */}
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 1.5 }}
-                className="text-[13px] text-text-muted font-body mt-2.5"
+              <motion.button
+                ref={buttonRef}
+                type="submit"
+                disabled={status === 'loading' || status === 'success'}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                style={{ x: springX, y: springY }}
+                className="h-[52px] px-[28px] bg-green-primary hover:bg-[#154626] disabled:bg-green-primary/80 text-white font-medium font-body rounded-xl text-[15px] flex items-center justify-center gap-2 transition-colors relative overflow-hidden shrink-0 shadow-md"
               >
-                Join <span className="font-semibold text-text-secondary">{waitlistCount}</span> people already waiting
-              </motion.p>
+                {status === 'loading' ? (
+                  <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                ) : (
+                  'Join the waitlist'
+                )}
+              </motion.button>
+            </motion.form>
 
+            {/* Status notifications */}
+            <div className="h-6 mt-3.5">
+              <AnimatePresence mode="wait">
+                {status === 'success' && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 5 }}
+                    className="text-green-primary text-[14px] font-medium font-body"
+                  >
+                    You're on the list 🌿 We'll be in touch.
+                  </motion.p>
+                )}
+                {status === 'error' && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 5 }}
+                    className="text-red-600 text-[14px] font-medium font-body"
+                  >
+                    {errorMessage}
+                  </motion.p>
+                )}
+              </AnimatePresence>
             </div>
+
+            {/* Social Proof count */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 1.3 }}
+              className="text-[13px] text-text-muted font-body mt-2.5"
+            >
+              Join <span className="font-semibold text-text-secondary">{waitlistCount}</span> people already waiting
+            </motion.p>
+
           </div>
 
         </div>
