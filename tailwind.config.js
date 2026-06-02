@@ -1,3 +1,13 @@
+import flattenColorPalette from 'tailwindcss/lib/util/flattenColorPalette'
+
+function addVariablesForColors({ addBase, theme }) {
+  let allColors = flattenColorPalette(theme('colors'));
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+  addBase({ ':root': newVars });
+}
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -6,10 +16,17 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        display: ['Instrument Serif', 'Georgia', 'serif'],
+        body: ['Inter', 'system-ui', 'sans-serif'],
+      },
       colors: {
-        'green-primary': 'var(--green-primary)',
-        'green-accent': 'var(--green-accent)',
-        'green-light': 'var(--green-light)',
+        green: {
+          primary: '#1C5C32',
+          accent: '#3D9A50',
+          light: '#E8F5EC',
+          muted: '#A8CDB4',
+        },
         'text-primary': 'var(--text-primary)',
         'text-secondary': 'var(--text-secondary)',
         'text-muted': 'var(--text-muted)',
@@ -17,14 +34,19 @@ export default {
         'bg-subtle': 'var(--bg-subtle)',
         'border': 'var(--border)',
       },
-      fontFamily: {
-        sans: ['var(--font)', 'system-ui', 'sans-serif'],
+      animation: {
+        aurora: 'aurora 60s linear infinite',
+      },
+      keyframes: {
+        aurora: {
+          from: { backgroundPosition: '50% 50%, 50% 50%' },
+          to: { backgroundPosition: '350% 50%, 350% 50%' },
+        },
       },
     },
   },
   plugins: [
     require('@tailwindcss/typography'),
+    addVariablesForColors,
   ],
 }
-
-

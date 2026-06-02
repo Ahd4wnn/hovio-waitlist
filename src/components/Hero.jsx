@@ -1,19 +1,25 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence, useMotionValue, useSpring } from 'motion/react'
 import { supabase } from '../lib/supabase'
-import TerminalWidget from './TerminalWidget'
+import { AuroraBackground } from './AuroraBackground'
+import StatusLog from './StatusLog'
 
 export default function Hero() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState('idle') // idle | loading | success | error
   const [errorMessage, setErrorMessage] = useState('')
-  const [waitlistCount, setWaitlistCount] = useState(142) // Fallback default
+  const [waitlistCount, setWaitlistCount] = useState(142) // Sandbox default
 
-  // Magnetic button state
+  // Magnetic button settings using useMotionValue and useSpring
   const buttonRef = useRef(null)
-  const [buttonOffset, setButtonOffset] = useState({ x: 0, y: 0 })
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
 
-  // Fetch count live on mount
+  const springConfig = { stiffness: 300, damping: 20 }
+  const springX = useSpring(mouseX, springConfig)
+  const springY = useSpring(mouseY, springConfig)
+
+  // Fetch count from Supabase
   useEffect(() => {
     let active = true
     const fetchCount = async () => {
@@ -34,7 +40,6 @@ export default function Hero() {
     }
   }, [status])
 
-  // Submit hander
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!email || !email.includes('@')) {
@@ -52,7 +57,6 @@ export default function Hero() {
         .insert({ email })
 
       if (error) {
-        // Unique violation or duplicates check
         if (error.code === '23505' || (error.message && error.message.includes('already exists'))) {
           setStatus('error')
           setErrorMessage("You're already on the list!")
@@ -66,11 +70,10 @@ export default function Hero() {
       }
     } catch (err) {
       setStatus('error')
-      setErrorMessage('Network error. Please try again later.')
+      setErrorMessage('Network error. Please try again.')
     }
   }
 
-  // Magnetic button mouse movement tracker
   const handleMouseMove = (e) => {
     const button = buttonRef.current
     if (!button) return
@@ -82,96 +85,105 @@ export default function Hero() {
     const distanceX = e.clientX - centerX
     const distanceY = e.clientY - centerY
 
-    // Define max pull and sensitivity coefficient
-    const maxPull = 8
-    const pullFactor = 0.15
+    const maxPull = 10
+    const pullFactor = 0.2
 
     const x = Math.min(Math.max(distanceX * pullFactor, -maxPull), maxPull)
     const y = Math.min(Math.max(distanceY * pullFactor, -maxPull), maxPull)
 
-    setButtonOffset({ x, y })
+    mouseX.set(x)
+    mouseY.set(y)
   }
 
   const handleMouseLeave = () => {
-    setButtonOffset({ x: 0, y: 0 })
+    mouseX.set(0)
+    mouseY.set(0)
   }
 
-  // Animation constants
-  const headlineWords = "Therapy that learns, matches, and shows up.".split(" ")
+  // Split headline text into individual words
+  const words = "Therapy that learns, matches, and shows up.".split(" ")
 
   return (
-    <section className="min-height-[100vh] py-24 flex items-center justify-center bg-white relative overflow-hidden">
-      {/* Background soft ambient glows */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-green-light/40 rounded-full blur-[120px] pointer-events-none z-0" />
-
-      <div className="max-width-container w-full flex flex-col items-center justify-center text-center relative z-10">
-        <div className="max-w-[720px] w-full flex flex-col items-center">
+    <AuroraBackground className="min-h-screen py-24 select-none relative bg-white">
+      <div className="max-width-container w-full flex flex-col items-center justify-center text-center">
+        <div className="max-w-[680px] w-full flex flex-col items-center">
           
           {/* 1. Status Pill */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E8F5EC] text-[#1C5C32] text-[13px] font-semibold tracking-wide mb-8 shadow-sm border border-[#C8EAD1]"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
+            className="bg-green-light text-green-primary rounded-full px-3.5 py-1.5 text-[13px] font-medium font-body mb-8 inline-flex items-center gap-2 border border-[#C8EAD1] shadow-sm shrink-0"
           >
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#3D9A50] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#3D9A50]"></span>
+            <span className="relative flex h-2 w-2">
+              <span className="active-pulse-dot absolute inline-flex h-full w-full rounded-full bg-green-accent opacity-85"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-accent"></span>
             </span>
-            Building
+            Building something important
           </motion.div>
 
           {/* 2. Headline */}
-          <h1 className="text-[40px] md:text-[64px] font-bold text-text-primary tracking-tight leading-[1.1] mb-6 select-none max-w-[640px]">
-            {headlineWords.map((word, idx) => (
-              <motion.span
-                key={idx}
-                className="inline-block mr-[0.25em]"
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{
-                  duration: 0.7,
-                  ease: [0.16, 1, 0.3, 1],
-                  delay: 0.2 + idx * 0.05,
-                }}
-              >
-                {word}
-              </motion.span>
-            ))}
+          <h1 className="font-display font-normal text-text-primary leading-[1.1] mb-6 max-w-[640px] tracking-tight text-[clamp(36px,8vw,48px)] md:text-[clamp(44px,6vw,72px)]">
+            {words.map((word, idx) => {
+              // Beautiful italic font styling for the word "learns,"
+              const isLearns = word.toLowerCase().includes('learns')
+              return (
+                <motion.span
+                  key={idx}
+                  className="inline-block mr-[0.25em]"
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.7,
+                    ease: [0.16, 1, 0.3, 1],
+                    delay: 0.25 + idx * 0.06,
+                  }}
+                >
+                  {isLearns ? (
+                    <em className="font-display italic font-normal tracking-wide text-green-primary">
+                      learns,
+                    </em>
+                  ) : (
+                    word
+                  )}
+                </motion.span>
+              )
+            })}
           </h1>
 
           {/* 3. Sub-headline */}
           <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.6 }}
-            className="text-base md:text-[18px] text-text-secondary max-w-[520px] leading-relaxed mb-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.9 }}
+            className="text-[17px] md:text-[18px] text-text-secondary max-w-[520px] leading-relaxed font-body font-light mb-10"
           >
-            Hovio connects you with certified therapists chosen by AI — and stays by your side, 24/7.
+            Hovio connects you with certified therapists chosen by AI — and stays by your side whenever you need it, 24/7.
           </motion.p>
 
-          {/* Layout Container for responsive order (swap terminal and form on mobile) */}
+          {/* Grid Swapping Layout */}
           <div className="w-full flex flex-col gap-10">
             
-            {/* Terminal Widget (order-2 on mobile, order-1 on desktop) */}
+            {/* StatusLog Progress Card (order-5 on mobile, order-4 on desktop) */}
             <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.8 }}
-              className="w-full order-2 md:order-1"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 1.1 }}
+              className="w-full order-5 md:order-4"
             >
-              <TerminalWidget />
+              <StatusLog />
             </motion.div>
 
-            {/* Email Form Container (order-1 on mobile, order-2 on desktop) */}
-            <div className="w-full order-1 md:order-2 flex flex-col items-center">
+            {/* Email capturing captures (order-4 on mobile, order-5 on desktop) */}
+            <div className="w-full order-4 md:order-5 flex flex-col items-center">
+              
               <motion.form
                 id="hero-waitlist-form"
                 onSubmit={handleSubmit}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.7 }}
-                className="w-full max-w-[480px] flex flex-col md:flex-row gap-3"
+                transition={{ duration: 0.6, delay: 1.3 }}
+                className="w-full max-w-[480px] flex flex-col sm:flex-row gap-3"
               >
                 <div className="flex-1 relative">
                   <input
@@ -179,8 +191,8 @@ export default function Hero() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={status === 'loading' || status === 'success'}
-                    placeholder="Enter your email"
-                    className="w-full px-4 h-12 bg-white text-text-primary border border-border focus:border-[#3D9A50] focus:ring-1 focus:ring-[#3D9A50] rounded-xl outline-none transition-all text-[15px]"
+                    placeholder="your@email.com"
+                    className="w-full px-[18px] h-[52px] bg-white text-text-primary border border-[#E4EAE4] focus:border-green-accent rounded-xl outline-none font-body text-[16px] transition-colors"
                     required
                   />
                 </div>
@@ -191,9 +203,8 @@ export default function Hero() {
                   disabled={status === 'loading' || status === 'success'}
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseLeave}
-                  animate={{ x: buttonOffset.x, y: buttonOffset.y }}
-                  transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
-                  className="h-12 px-6 bg-[#1C5C32] hover:bg-[#154626] text-white font-semibold rounded-xl text-[14px] flex items-center justify-center gap-2 transition-colors relative overflow-hidden group shadow-md"
+                  style={{ x: springX, y: springY }}
+                  className="h-[52px] px-[28px] bg-green-primary hover:bg-[#154626] disabled:bg-green-primary/80 text-white font-medium font-body rounded-xl text-[15px] flex items-center justify-center gap-2 transition-colors relative overflow-hidden shrink-0 shadow-md"
                 >
                   {status === 'loading' ? (
                     <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
@@ -206,17 +217,17 @@ export default function Hero() {
                 </motion.button>
               </motion.form>
 
-              {/* Status Notifications */}
-              <div className="h-6 mt-3">
+              {/* Status notifications */}
+              <div className="h-6 mt-3.5">
                 <AnimatePresence mode="wait">
                   {status === 'success' && (
                     <motion.p
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 5 }}
-                      className="text-[#1C5C32] text-sm font-medium"
+                      className="text-green-primary text-[14px] font-medium font-body"
                     >
-                      You're on the list. We'll be in touch. 🌿
+                      You're on the list 🌿 We'll be in touch.
                     </motion.p>
                   )}
                   {status === 'error' && (
@@ -224,7 +235,7 @@ export default function Hero() {
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 5 }}
-                      className="text-red-600 text-sm font-medium"
+                      className="text-red-600 text-[14px] font-medium font-body"
                     >
                       {errorMessage}
                     </motion.p>
@@ -232,12 +243,12 @@ export default function Hero() {
                 </AnimatePresence>
               </div>
 
-              {/* 6. Social Proof */}
+              {/* Social Proof count */}
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.9 }}
-                className="text-[13px] text-text-muted mt-2"
+                transition={{ duration: 0.6, delay: 1.5 }}
+                className="text-[13px] text-text-muted font-body mt-2.5"
               >
                 Join <span className="font-semibold text-text-secondary">{waitlistCount}</span> people already waiting
               </motion.p>
@@ -247,6 +258,6 @@ export default function Hero() {
 
         </div>
       </div>
-    </section>
+    </AuroraBackground>
   )
 }

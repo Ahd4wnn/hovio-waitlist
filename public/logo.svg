@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="hovio-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3D9A50" />
+      <stop offset="100%" stop-color="#1C5C32" />
+    </linearGradient>
+  </defs>
+  <path 
+    d="M16,28 C16,20 35,32 50,45 C65,32 84,20 84,28 C84,36 84,64 84,72 C84,80 65,68 50,55 C35,68 16,80 16,72 C16,64 16,36 16,28 Z" 
+    fill="url(#hovio-gradient)" 
+    stroke="#1C5C32"
+    stroke-width="1.5"
+    stroke-linejoin="round"
+  />
+</svg>

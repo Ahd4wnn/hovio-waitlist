@@ -6,28 +6,48 @@
   --green-primary: #1C5C32;
   --green-accent: #3D9A50;
   --green-light: #E8F5EC;
+  --green-muted: #A8CDB4;
   --text-primary: #0A0A0A;
   --text-secondary: #4A4A4A;
   --text-muted: #8A8A8A;
   --bg-primary: #FFFFFF;
-  --bg-subtle: #F8FAF8;
+  --bg-subtle: #F7FAF8;
   --border: #E4EAE4;
-  --font: 'Inter', system-ui, sans-serif;
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
+
+html { 
+  scroll-behavior: auto; /* Lenis handles smooth scroll */
 }
 
 body {
-  font-family: var(--font);
-  background-color: var(--bg-primary);
+  font-family: var(--font-body);
+  background: var(--bg-primary);
   color: var(--text-primary);
-  overflow-x: hidden;
-  font-feature-settings: "cv11", "ss01";
-  margin: 0;
-  padding: 0;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-/* Base custom utility to prevent scroll jumps and provide high-fidelity fonts */
+h1, h2, h3 { 
+  font-family: var(--font-display); 
+  font-weight: 400; 
+}
+
+/* Custom premium ambient glow variables for keyframe animations */
+@layer base {
+  :root {
+    --white: #ffffff;
+    --transparent: transparent;
+  }
+}
+
 ::selection {
   background-color: var(--green-light);
   color: var(--green-primary);
@@ -39,4 +59,20 @@ body {
   margin-right: auto;
   padding-left: 24px;
   padding-right: 24px;
+}
+
+/* Status log Pulse animation */
+@keyframes logPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+}
+
+.active-pulse-dot {
+  animation: logPulse 2s infinite ease-in-out;
 }
