@@ -42,26 +42,14 @@ export default function Navbar() {
       className="fixed top-0 left-0 right-0 z-50 h-16 border-b transition-all duration-300 backdrop-blur-md"
     >
       <div className="max-width-container h-full flex items-center justify-between">
-        {/* Left: Branding & SVG Blob Logo */}
+        {/* Left: Branding & Custom Logo Image */}
         <a href="/" className="flex items-center gap-2 group">
-          {/* Uploded-style elegant green blob SVG */}
-          <div className="relative w-8 h-8 flex items-center justify-center">
-            <svg
-              className="w-7 h-7 text-[#3D9A50] animate-pulse duration-[4000ms]"
-              viewBox="0 0 100 100"
-              fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M72.5,28.5C81.8,40.2,84.3,57.7,77.7,70C71.1,82.3,55.4,89.3,40.1,86.8C24.7,84.2,9.7,72,6.4,56.8C3.1,41.6,11.5,23.3,25.8,13.2C40.1,3.1,60.2,1.3,72.5,28.5Z" />
-            </svg>
-            <svg
-              className="w-5 h-5 text-[#1C5C32] absolute opacity-90"
-              viewBox="0 0 100 100"
-              fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M78.6,35.7C83.7,46.7,80.3,60.7,71.4,69.9C62.6,79.1,48.2,83.4,35.2,79.5C22.2,75.6,10.6,63.5,8.2,49.8C5.8,36.1,12.7,20.8,24.8,11.8C36.9,2.8,54.2,0.1,66.8,4.9C79.4,9.6,73.4,24.7,78.6,35.7Z" />
-            </svg>
+          <div className="relative w-8 h-8 flex items-center justify-center overflow-hidden rounded-[8px] shadow-sm border border-border">
+            <img 
+              src="/logo.jpg" 
+              alt="Hovio Logo" 
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
           </div>
           <span className="text-[21px] font-semibold tracking-tight text-[#1C5C32] lowercase">
             hovio
