@@ -42,6 +42,7 @@ export default function ProblemStrip() {
   return (
     <section
       ref={sectionRef}
+      id="problem-strip"
       className="w-full bg-bg-subtle border-y border-[#E4EAE4] py-24 select-none relative overflow-hidden font-body"
     >
       <div className="max-width-container">

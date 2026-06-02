@@ -24,11 +24,12 @@ export default function Hero() {
     let active = true
     const fetchCount = async () => {
       try {
-        const { count, error } = await supabase
-          .from('waitlist')
-          .select('*', { count: 'exact', head: true })
-        if (active && !error && count !== null) {
-          setWaitlistCount(count)
+        const { data, error } = await supabase
+          .from('waitlist_count')
+          .select('total')
+          .single()
+        if (active && !error && data && data.total !== undefined) {
+          setWaitlistCount(data.total)
         }
       } catch (err) {
         console.error('Error fetching waitlist count:', err)
@@ -117,7 +118,8 @@ export default function Hero() {
   const words = "Therapy that learns, matches, and shows up.".split(" ")
 
   return (
-    <AuroraBackground className="min-h-screen py-24 select-none relative bg-white">
+    <section id="waitlist" className="w-full">
+      <AuroraBackground className="min-h-screen py-24 select-none relative bg-white">
       <div className="max-width-container w-full flex flex-col items-center justify-center text-center">
         <div className="max-w-[680px] w-full flex flex-col items-center">
           
@@ -188,6 +190,8 @@ export default function Hero() {
               <div className="flex-1 relative">
                 <input
                   type="email"
+                  name="email"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={status === 'loading' || status === 'success'}
@@ -258,5 +262,6 @@ export default function Hero() {
         </div>
       </div>
     </AuroraBackground>
+    </section>
   )
 }

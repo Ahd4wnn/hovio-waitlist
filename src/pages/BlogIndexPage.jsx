@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async'
+import SEO from '../components/SEO'
 import Navbar from '../components/Navbar'
 import BlogIndex from '../components/blog/BlogIndex'
 import Footer from '../components/Footer'
@@ -6,12 +6,11 @@ import Footer from '../components/Footer'
 export default function BlogIndexPage() {
   return (
     <>
-      <Helmet>
-        <title>Blog — Hovio</title>
-        <meta name="description" content="Thoughts on therapy, technology, and mental health from the Hovio team." />
-        <meta property="og:title" content="Blog — Hovio" />
-        <meta property="og:type" content="website" />
-      </Helmet>
+      <SEO
+        title="Blog"
+        description="Thoughts on therapy, technology, and mental health from the Hovio team."
+        url="https://hovio.com/blog"
+      />
       
       <Navbar />
       <BlogIndex />
@@ -19,3 +18,4 @@ export default function BlogIndexPage() {
     </>
   )
 }
+

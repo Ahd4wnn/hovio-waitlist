@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'motion/react'
 
 const ROW1_ITEMS = [
@@ -26,6 +26,16 @@ const ROW2_ITEMS = [
 export default function MarqueeCarousel() {
   const sectionRef = useRef(null)
   const [isHovered, setIsHovered] = useState(false)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setPrefersReducedMotion(mediaQuery.matches)
+    
+    const listener = (e) => setPrefersReducedMotion(e.matches)
+    mediaQuery.addEventListener('change', listener)
+    return () => mediaQuery.removeEventListener('change', listener)
+  }, [])
 
   // Track the scroll position of the marquee section to apply vertical parallax offsets
   const { scrollYProgress } = useScroll({
@@ -33,21 +43,22 @@ export default function MarqueeCarousel() {
     offset: ['start end', 'end start']
   })
 
-  // Vertical wave transformation (opposite directions)
-  const translateYRow1 = useTransform(scrollYProgress, [0, 1], [0, -20])
-  const translateYRow2 = useTransform(scrollYProgress, [0, 1], [0, 20])
+  // Vertical wave transformation (opposite directions) - disabled if reduced motion preferred
+  const translateYRow1 = useTransform(scrollYProgress, [0, 1], [0, prefersReducedMotion ? 0 : -20])
+  const translateYRow2 = useTransform(scrollYProgress, [0, 1], [0, prefersReducedMotion ? 0 : 20])
 
   // Helper to render one full seamless scrolling ribbon containing two duplicate blocks
   const renderMarqueeRibbon = (items, isRow1) => {
     // Duplicate standard array 4x to prevent gaps on ultrawide viewports
     const quadrupledItems = [...items, ...items, ...items, ...items]
+    const duration = prefersReducedMotion ? 999999 : (isHovered ? 80 : (isRow1 ? 35 : 45))
 
     return (
       <motion.div
-        animate={{ x: isRow1 ? ['-50%', '0%'] : ['0%', '-50%'] }}
+        animate={prefersReducedMotion ? {} : { x: isRow1 ? ['-50%', '0%'] : ['0%', '-50%'] }}
         transition={{
           ease: 'linear',
-          duration: isHovered ? 80 : (isRow1 ? 35 : 45),
+          duration: duration,
           repeat: Infinity,
         }}
         className="flex whitespace-nowrap"

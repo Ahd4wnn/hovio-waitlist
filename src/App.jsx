@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import { useEffect } from 'react'
 import { initLenis } from './lib/lenis'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion, frame } from 'motion/react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import ProblemStrip from './components/ProblemStrip'
@@ -13,6 +13,7 @@ import MarqueeCarousel from './components/MarqueeCarousel'
 import Footer from './components/Footer'
 import BlogIndexPage from './pages/BlogIndexPage'
 import BlogPostPage from './pages/BlogPostPage'
+import NotFoundPage from './pages/NotFoundPage'
 
 function HomePage() {
   return (
@@ -67,6 +68,19 @@ function AnimatedAppRoutes() {
             </motion.div>
           } 
         />
+        <Route 
+          path="*" 
+          element={
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+            >
+              <NotFoundPage />
+            </motion.div>
+          } 
+        />
       </Routes>
     </AnimatePresence>
   )
@@ -74,7 +88,12 @@ function AnimatedAppRoutes() {
 
 export default function App() {
   useEffect(() => {
-    initLenis()
+    const lenis = initLenis()
+    
+    // Connect Lenis scrolling updates to Framer Motion's tick loop
+    lenis.on('scroll', () => {
+      frame.update()
+    })
   }, [])
 
   return (
@@ -85,3 +104,4 @@ export default function App() {
     </HelmetProvider>
   )
 }
+

@@ -181,6 +181,7 @@ export default function Features() {
   return (
     <section
       ref={containerRef}
+      id="features"
       className="w-full bg-bg-subtle h-screen relative overflow-hidden flex flex-col md:flex-row justify-center font-body select-none"
     >
       {/* Background smooth ambient green glows */}

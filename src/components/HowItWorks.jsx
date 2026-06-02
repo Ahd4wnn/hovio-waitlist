@@ -40,7 +40,7 @@ const STEPS = [
 
 export default function HowItWorks() {
   return (
-    <section className="w-full bg-white py-28 relative overflow-hidden font-body select-none">
+    <section id="how-it-works" className="w-full bg-white py-28 relative overflow-hidden font-body select-none">
       <div className="max-width-container">
         
         {/* Header Block */}

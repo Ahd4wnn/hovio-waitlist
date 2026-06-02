@@ -8,7 +8,7 @@ const TRUST_POINTS = [
 
 export default function PrivacyStrip() {
   return (
-    <section className="w-full bg-green-primary py-24 select-none relative overflow-hidden font-body text-white">
+    <section id="privacy" className="w-full bg-green-primary py-24 select-none relative overflow-hidden font-body text-white">
       {/* Background organic glow details */}
       <div className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[350px] h-[350px] bg-[#3D9A50]/20 rounded-full blur-[80px] pointer-events-none" />
 

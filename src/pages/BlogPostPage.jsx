@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import BlogPost from '../components/blog/BlogPost'
 import Footer from '../components/Footer'
+import SEO from '../components/SEO'
 import { getPostBySlug } from '../lib/posts'
 
 export default function BlogPostPage() {
@@ -20,9 +21,19 @@ export default function BlogPostPage() {
 
   return (
     <>
+      <SEO
+        title={post.title}
+        description={post.excerpt}
+        url={`https://hovio.com/blog/${post.slug}`}
+        type="article"
+        article={{
+          date: post.date,
+        }}
+      />
       <Navbar />
       <BlogPost post={post} />
       <Footer />
     </>
   )
 }
+

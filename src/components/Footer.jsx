@@ -65,7 +65,9 @@ export default function Footer() {
               <div className="w-8 h-8 flex items-center justify-center overflow-hidden">
                 <img 
                   src="/logo.jpg" 
-                  alt="Hovio Logo" 
+                  alt="Hovio logo" 
+                  width="32"
+                  height="32"
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -140,6 +142,8 @@ export default function Footer() {
             <form onSubmit={handleSubmit} className="flex gap-2 w-full max-w-[320px]">
               <input
                 type="email"
+                name="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={status === 'loading' || status === 'success'}
