@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { supabase } from '../lib/supabase'
 
@@ -23,10 +23,28 @@ export default function TherapistForm() {
   })
   const [status, setStatus] = useState('idle') // idle | loading | success | error
   const [errorMsg, setErrorMsg] = useState('')
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const dropdownRef = useRef(null)
+
+  // Handle clicking outside to close custom dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const handleChange = (e) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSelectLicense = (val) => {
+    setForm((prev) => ({ ...prev, license_type: val }))
+    setIsDropdownOpen(false)
   }
 
   const handleSubmit = async (e) => {
@@ -265,24 +283,73 @@ export default function TherapistForm() {
                       />
                     </div>
 
-                    <div>
+                    <div className="relative" ref={dropdownRef}>
                       <label className={labelClass} htmlFor="license_type">
                         Licence type <span className="text-green-accent">*</span>
                       </label>
-                      <select
+                      
+                      <button
+                        type="button"
                         id="license_type"
-                        name="license_type"
-                        required
-                        value={form.license_type}
-                        onChange={handleChange}
-                        className={`${inputClass} cursor-pointer appearance-none`}
-                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A8A8A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                        className={`${inputClass} flex items-center justify-between text-left cursor-pointer`}
                       >
-                        <option value="" disabled>Select type</option>
-                        {LICENCE_TYPES.map((lt) => (
-                          <option key={lt} value={lt}>{lt}</option>
-                        ))}
-                      </select>
+                        <span className={form.license_type ? 'text-text-primary' : 'text-text-muted'}>
+                          {form.license_type || 'Select type'}
+                        </span>
+                        <motion.svg
+                          animate={{ rotate: isDropdownOpen ? 180 : 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="w-4 h-4 text-text-muted shrink-0"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M6 9l6 6 6-6" />
+                        </motion.svg>
+                      </button>
+
+                      <AnimatePresence>
+                        {isDropdownOpen && (
+                          <motion.ul
+                            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                            transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                            className="absolute z-50 left-0 right-0 mt-2 py-2 bg-white border border-[#E4EAE4] rounded-2xl shadow-[0_10px_25px_-5px_rgba(0,0,0,0.06),0_8px_16px_-6px_rgba(0,0,0,0.04)] max-h-60 overflow-y-auto outline-none font-body text-[14px]"
+                          >
+                            {LICENCE_TYPES.map((lt) => (
+                              <li key={lt}>
+                                <button
+                                  type="button"
+                                  onClick={() => handleSelectLicense(lt)}
+                                  className={`w-full px-4 py-3 text-left hover:bg-green-light/45 transition-colors flex items-center justify-between font-body ${
+                                    form.license_type === lt ? 'text-green-primary font-medium' : 'text-text-secondary'
+                                  }`}
+                                >
+                                  <span>{lt}</span>
+                                  {form.license_type === lt && (
+                                    <svg
+                                      className="w-4 h-4 text-green-accent"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2.5"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    >
+                                      <path d="M20 6 9 17l-5-5" />
+                                    </svg>
+                                  )}
+                                </button>
+                              </li>
+                            ))}
+                          </motion.ul>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </div>
 
