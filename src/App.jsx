@@ -5,6 +5,11 @@ import { initLenis } from './lib/lenis'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import ProblemStrip from './components/ProblemStrip'
+import HowItWorks from './components/HowItWorks'
+import Features from './components/Features'
+import PrivacyStrip from './components/PrivacyStrip'
+import MarqueeCarousel from './components/MarqueeCarousel'
+import Footer from './components/Footer'
 
 function HomePage() {
   return (
@@ -12,6 +17,11 @@ function HomePage() {
       <Navbar />
       <Hero />
       <ProblemStrip />
+      <HowItWorks />
+      <Features />
+      <PrivacyStrip />
+      <MarqueeCarousel />
+      <Footer />
     </>
   )
 }
