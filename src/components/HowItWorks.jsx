@@ -47,8 +47,8 @@ export default function HowItWorks() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          viewport={{ once: true, amount: 0.1, fallback: true }}
+          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
           className="text-center mb-20"
         >
           <span className="text-[12px] font-semibold text-green-accent uppercase tracking-widest block mb-4">
@@ -67,8 +67,8 @@ export default function HowItWorks() {
               key={idx}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: idx * 0.15 }}
+              viewport={{ once: true, amount: 0.1, fallback: true }}
+              transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1], delay: idx * 0.15 }}
               className="flex flex-col items-center text-center relative px-4 z-10"
             >
               {/* Decorative Large Background Step Number */}

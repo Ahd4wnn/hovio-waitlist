@@ -18,8 +18,8 @@ export default function PrivacyStrip() {
         <motion.div
           initial={{ opacity: 0, x: -24 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          viewport={{ once: true, amount: 0.1, fallback: true }}
+          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1], delay: 0.1 }}
           className="flex-1 text-left"
         >
           <span className="text-[12px] font-semibold text-white/60 uppercase tracking-widest block mb-4">
@@ -37,8 +37,8 @@ export default function PrivacyStrip() {
         <motion.div
           initial={{ opacity: 0, x: 24 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
+          viewport={{ once: true, amount: 0.1, fallback: true }}
+          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1], delay: 0.25 }}
           className="flex flex-col gap-5 text-left shrink-0 w-full md:w-auto"
         >
           {TRUST_POINTS.map((point, idx) => (

@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import { useEffect } from 'react'
 import { initLenis } from './lib/lenis'
-import { AnimatePresence, motion, frame } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import ProblemStrip from './components/ProblemStrip'
@@ -37,13 +37,12 @@ function HomePage() {
 
 function AnimatedAppRoutes() {
   const location = useLocation()
-
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<HomePage />} />
-        <Route 
-          path="/blog" 
+        <Route
+          path="/blog"
           element={
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -53,10 +52,10 @@ function AnimatedAppRoutes() {
             >
               <BlogIndexPage />
             </motion.div>
-          } 
+          }
         />
-        <Route 
-          path="/blog/:slug" 
+        <Route
+          path="/blog/:slug"
           element={
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -66,10 +65,10 @@ function AnimatedAppRoutes() {
             >
               <BlogPostPage />
             </motion.div>
-          } 
+          }
         />
-        <Route 
-          path="*" 
+        <Route
+          path="*"
           element={
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -79,7 +78,7 @@ function AnimatedAppRoutes() {
             >
               <NotFoundPage />
             </motion.div>
-          } 
+          }
         />
       </Routes>
     </AnimatePresence>
@@ -88,12 +87,7 @@ function AnimatedAppRoutes() {
 
 export default function App() {
   useEffect(() => {
-    const lenis = initLenis()
-    
-    // Connect Lenis scrolling updates to Framer Motion's tick loop
-    lenis.on('scroll', () => {
-      frame.update()
-    })
+    initLenis()
   }, [])
 
   return (
@@ -104,4 +98,3 @@ export default function App() {
     </HelmetProvider>
   )
 }
-

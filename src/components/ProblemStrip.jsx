@@ -32,7 +32,7 @@ export default function ProblemStrip() {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.8,
+        duration: 0.6,
         ease: [0.25, 0.1, 0.25, 1],
         delay: customDelay,
       },
@@ -54,7 +54,7 @@ export default function ProblemStrip() {
             variants={cardVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ once: true, amount: 0.1, fallback: true }}
             className="flex-1 flex flex-col items-center text-center px-4"
           >
             <div 
@@ -66,17 +66,17 @@ export default function ProblemStrip() {
               Average wait for a therapist appointment
             </p>
           </motion.div>
-
+ 
           {/* Vertical Divider 1 */}
           <div className="hidden md:block w-[1px] h-20 bg-border shrink-0 self-center" />
-
+ 
           {/* Card 2 */}
           <motion.div
             custom={0.1}
             variants={cardVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ once: true, amount: 0.1, fallback: true }}
             className="flex-1 flex flex-col items-center text-center px-4"
           >
             <div 
@@ -88,17 +88,17 @@ export default function ProblemStrip() {
               Average cost per therapy session
             </p>
           </motion.div>
-
+ 
           {/* Vertical Divider 2 */}
           <div className="hidden md:block w-[1px] h-20 bg-border shrink-0 self-center" />
-
+ 
           {/* Card 3 (Static - animate in only) */}
           <motion.div
             custom={0.2}
             variants={cardVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ once: true, amount: 0.1, fallback: true }}
             className="flex-1 flex flex-col items-center text-center px-4"
           >
             <div 

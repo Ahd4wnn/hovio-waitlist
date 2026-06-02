@@ -39,7 +39,7 @@ export default function BlogCard({ post, delay = 0 }) {
       variants={cardVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true }}
+      viewport={{ once: true, amount: 0.1, fallback: true }}
       onClick={handleCardClick}
       className="bg-white border border-[#E4EAE4] rounded-[20px] p-9 shadow-[0_1px_4px_rgba(0,0,0,0.05)] transition-all duration-300 hover:border-green-muted hover:-translate-y-1 cursor-pointer flex flex-col justify-between text-left group min-h-[320px] select-none"
     >

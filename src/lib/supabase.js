@@ -27,20 +27,20 @@ export const supabase = isConfigured
 
           return { data: [row], error: null }
         },
-        select: (columns, options) => {
-          return {
-            // Support chainable methods if needed, or straight promise execution
-            then: async (onfulfilled) => {
-              console.warn(`[Hovio Mock Supabase] Fetch count from "${table}"`)
-              // Simulate network latency
-              await new Promise((resolve) => setTimeout(resolve, 300))
-              return onfulfilled({
-                data: [],
-                error: null,
-                count: 142, // High fidelity sandbox value
-              })
-            },
+        select: (columns) => {
+          const result = {
+            data: table === 'waitlist_count' ? { total: 142 } : [],
+            error: null,
+            count: 142
           }
+          const promise = Promise.resolve(result)
+          
+          const chain = {
+            single: () => Promise.resolve(result),
+            then: (onfulfilled, onrejected) => promise.then(onfulfilled, onrejected)
+          }
+          return chain
         },
       }),
     }
+

@@ -49,8 +49,8 @@ export default function Footer() {
     <motion.footer
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      viewport={{ once: true, amount: 0.1, fallback: true }}
+      transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
       className="w-full bg-bg-subtle border-t border-[#E4EAE4] py-16 pb-10 select-none relative z-10 font-body"
     >
       <div className="max-width-container">

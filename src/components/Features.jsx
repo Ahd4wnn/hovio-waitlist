@@ -117,12 +117,12 @@ export default function Features() {
         gsap.fromTo(
           card,
           {
-            scale: 0.94,
-            opacity: 0.6,
-            filter: 'blur(1px)'
+            scale: 0.96,
+            opacity: 0.75,
+            filter: 'blur(0.5px)'
           },
           {
-            scale: 1.03,
+            scale: 1.02,
             opacity: 1,
             filter: 'blur(0px)',
             ease: 'sine.inOut',
@@ -138,9 +138,15 @@ export default function Features() {
       })
     }, containerRef)
 
+    // Refresh after pin settles so other scroll libraries recalculate
+    const handleRefresh = () => {
+      window.dispatchEvent(new Event('resize'))
+    }
+    ScrollTrigger.addEventListener('refresh', handleRefresh)
+
     return () => {
       ctx.revert()
-      ScrollTrigger.getAll().forEach(t => t.kill())
+      ScrollTrigger.removeEventListener('refresh', handleRefresh)
     }
   }, [])
 
