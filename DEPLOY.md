@@ -43,6 +43,47 @@ USING (false);
 -- Exposes ONLY the total count of registrations to the client safely bypassing RLS restrictions
 CREATE OR REPLACE VIEW public.waitlist_count AS
 SELECT count(*)::int AS total FROM public.waitlist;
+
+-- 5. Create therapist interest registration table
+-- Drop the previous therapist_applications table if you already ran it
+DROP TABLE IF EXISTS public.therapist_applications;
+
+CREATE TABLE IF NOT EXISTS public.therapist_interest (
+  id              UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at      TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  full_name       TEXT NOT NULL,
+  email           TEXT NOT NULL,
+  phone           TEXT,
+  country         TEXT NOT NULL,
+  license_type    TEXT NOT NULL,
+  CONSTRAINT therapist_interest_email_unique UNIQUE (email),
+  CONSTRAINT therapist_interest_email_format CHECK (
+    email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+  )
+);
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS therapist_interest_email_idx
+  ON public.therapist_interest (email);
+CREATE INDEX IF NOT EXISTS therapist_interest_created_at_idx
+  ON public.therapist_interest (created_at DESC);
+
+-- Enable RLS
+ALTER TABLE public.therapist_interest ENABLE ROW LEVEL SECURITY;
+
+-- Allow public therapist inserts
+CREATE POLICY "Allow public therapist inserts"
+  ON public.therapist_interest
+  FOR INSERT
+  TO anon
+  WITH CHECK (true);
+
+-- Deny public therapist reads
+CREATE POLICY "Deny public therapist reads"
+  ON public.therapist_interest
+  FOR SELECT
+  TO anon
+  USING (false);
 ```
 
 ---

@@ -8,7 +8,8 @@ export default function Hero() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState('idle') // idle | loading | success | error
   const [errorMessage, setErrorMessage] = useState('')
-  const [waitlistCount, setWaitlistCount] = useState(142) // Sandbox default
+  const BASE_COUNT = 112
+  const [waitlistCount, setWaitlistCount] = useState(BASE_COUNT) // Sandbox default starting offset
 
   // Magnetic button settings using useMotionValue and useSpring
   const buttonRef = useRef(null)
@@ -29,7 +30,8 @@ export default function Hero() {
           .select('total')
           .single()
         if (active && !error && data && data.total !== undefined) {
-          setWaitlistCount(data.total)
+          const real = parseInt(data.total ?? 0)
+          setWaitlistCount(BASE_COUNT + real)
         }
       } catch (err) {
         console.error('Error fetching waitlist count:', err)

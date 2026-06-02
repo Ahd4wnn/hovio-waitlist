@@ -7,6 +7,7 @@ import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import ProblemStrip from './components/ProblemStrip'
 import HowItWorks from './components/HowItWorks'
+import TherapistForm from './components/TherapistForm'
 import Features from './components/Features'
 import PrivacyStrip from './components/PrivacyStrip'
 import MarqueeCarousel from './components/MarqueeCarousel'
@@ -27,6 +28,7 @@ function HomePage() {
       <Hero />
       <ProblemStrip />
       <HowItWorks />
+      <TherapistForm />
       <Features />
       <PrivacyStrip />
       <MarqueeCarousel />
