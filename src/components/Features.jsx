@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-// Register ScrollTrigger plugin with GSAP
 gsap.registerPlugin(ScrollTrigger)
 
 const FEATURES = [
@@ -71,119 +70,198 @@ const FEATURES = [
 ]
 
 export default function Features() {
-  const sectionRef = useRef(null)
+  const containerRef = useRef(null)
+  const trackRef = useRef(null)
 
-  // 1. GSAP Scroll Trigger Staggered Reveal Animation
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.gsap-feature-card',
-        {
-          opacity: 0,
-          y: 60,
-          rotateX: 12,
-          transformPerspective: 1000
-        },
-        {
-          opacity: 1,
-          y: 0,
-          rotateX: 0,
-          duration: 1.2,
-          ease: 'power4.out',
-          stagger: 0.1,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none none'
-          }
-        }
-      )
-    }, sectionRef)
+    let mm = gsap.matchMedia()
 
-    return () => ctx.revert() // clean unmount contexts
+    mm.add('(min-width: 768px)', () => {
+      const track = trackRef.current
+      const container = containerRef.current
+      if (!track || !container) return
+
+      // Total width to scroll horizontally
+      const scrollAmount = track.scrollWidth - (container.clientWidth * 0.65) // account for the split layout width
+
+      // Pin section and translate right track horizontally
+      const pinTrigger = ScrollTrigger.create({
+        trigger: container,
+        pin: true,
+        start: 'top top',
+        end: () => `+=${scrollAmount}`,
+        scrub: 1,
+        invalidateOnRefresh: true,
+      })
+
+      // Timeline for horizontal scroll of track
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
+          start: 'top top',
+          end: () => `+=${scrollAmount}`,
+          scrub: 1,
+          invalidateOnRefresh: true,
+        }
+      })
+
+      tl.to(track, {
+        x: () => -scrollAmount,
+        ease: 'none'
+      })
+
+      // Animate active cards scale/opacity based on viewport focus area
+      const cards = gsap.utils.toArray('.gsap-horizontal-card')
+      cards.forEach((card) => {
+        gsap.fromTo(
+          card,
+          {
+            scale: 0.95,
+            opacity: 0.6,
+            filter: 'blur(1px)'
+          },
+          {
+            scale: 1.05,
+            opacity: 1,
+            filter: 'blur(0px)',
+            ease: 'sine.inOut',
+            scrollTrigger: {
+              trigger: card,
+              containerAnimation: tl, // Bind to horizontal translation timeline
+              start: 'left 60%',
+              end: 'right 40%',
+              scrub: true,
+            }
+          }
+        )
+      })
+
+      return () => {
+        pinTrigger.kill()
+        tl.kill()
+        ScrollTrigger.getAll().forEach(t => t.kill())
+      }
+    })
+
+    mm.add('(max-width: 767px)', () => {
+      // Mobile stacked layout entry triggers
+      const cards = gsap.utils.toArray('.gsap-horizontal-card')
+      cards.forEach((card, idx) => {
+        gsap.fromTo(
+          card,
+          {
+            opacity: 0,
+            y: 40,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 85%',
+              toggleActions: 'play none none none'
+            }
+          }
+        )
+      })
+    })
+
+    return () => {
+      mm.revert()
+      ScrollTrigger.getAll().forEach(t => t.kill())
+    }
   }, [])
 
-  // 2. Tactile 3D Tilt Hover calculations
+  // Tactile 3D Tilt Hover calculations (reused from initial design for premium interaction)
   const handleMouseMove = (e, cardEl) => {
     if (!cardEl) return
     const rect = cardEl.getBoundingClientRect()
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
 
-    // Get mouse offset relative to card center (-0.5 to 0.5 bounds)
     const relX = (x / rect.width) - 0.5
     const relY = (y / rect.height) - 0.5
 
-    // Map to max ±7deg subtle pivot (calm & clinical, not loud)
-    const tiltX = -relY * 14
-    const tiltY = relX * 14
+    const tiltX = -relY * 10
+    const tiltY = relX * 10
 
     gsap.to(cardEl, {
       rotateX: tiltX,
       rotateY: tiltY,
-      z: 10,
-      boxShadow: '0 12px 36px rgba(0, 0, 0, 0.05)',
+      z: 8,
       transformPerspective: 800,
       ease: 'power2.out',
-      duration: 0.4
+      duration: 0.3
     })
   }
 
   const handleMouseLeave = (cardEl) => {
     if (!cardEl) return
-    // Clean spring reset to center flat
     gsap.to(cardEl, {
       rotateX: 0,
       rotateY: 0,
       z: 0,
-      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.03)',
       ease: 'power4.out',
-      duration: 0.6
+      duration: 0.5
     })
   }
 
   return (
-    <section 
-      ref={sectionRef}
-      className="w-full bg-bg-subtle py-28 relative overflow-hidden font-body select-none"
+    <section
+      ref={containerRef}
+      className="w-full bg-bg-subtle py-16 md:py-0 md:h-screen relative overflow-hidden flex flex-col justify-center font-body select-none"
     >
-      <div className="max-width-container">
+      {/* Background smooth ambient green glows */}
+      <div className="absolute top-1/2 left-2/3 -translate-y-1/2 w-[550px] h-[550px] bg-green-light/45 rounded-full blur-[140px] pointer-events-none z-0" />
+      <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-[#A8CDB4]/20 rounded-full blur-[120px] pointer-events-none z-0" />
+
+      <div className="max-width-container w-full h-full flex flex-col md:flex-row items-center md:items-stretch relative z-10">
         
-        {/* Header Block */}
-        <div className="text-center mb-20">
+        {/* Left Side: Pinned/Static Header Block on desktop */}
+        <div className="w-full md:w-[35%] lg:w-[30%] flex flex-col justify-center text-left py-8 md:py-0 md:pr-8 border-b md:border-b-0 md:border-r border-[#E4EAE4]/60 shrink-0 bg-bg-subtle/80 backdrop-blur-sm md:backdrop-blur-none z-20">
           <span className="text-[12px] font-semibold text-green-accent uppercase tracking-widest block mb-4">
             What You Get
           </span>
-          <h2 className="font-display font-normal text-text-primary text-[clamp(36px,4vw,52px)] leading-[1.15] max-w-[500px] mx-auto">
+          <h2 className="font-display font-normal text-text-primary text-[clamp(36px,4vw,52px)] leading-[1.12] mb-6">
             Everything therapy should have always been.
           </h2>
+          <p className="text-[15px] text-text-secondary leading-relaxed font-light hidden md:block">
+            Scroll down to explore how Hovio bridges human empathy with continuous AI support to keep you covered 24/7.
+          </p>
         </div>
 
-        {/* Feature Cards Grid (configured for preserve-3d) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[960px] mx-auto overflow-visible [perspective:1200px]">
-          {FEATURES.map((feature, idx) => (
-            <div
-              key={idx}
-              onMouseMove={(e) => handleMouseMove(e, e.currentTarget)}
-              onMouseLeave={(e) => handleMouseLeave(e, e.currentTarget)}
-              className="gsap-feature-card bg-white border border-[#E4EAE4] rounded-[20px] p-8 shadow-[0_1px_3px_rgba(0,0,0,0.03)] transition-colors duration-300 hover:border-green-muted flex flex-col sm:flex-row items-start gap-5 group cursor-pointer will-change-transform [transform-style:preserve-3d]"
-            >
-              {/* Icon Container (shifted on hover in preserve-3d) */}
-              <div className="w-11 h-11 rounded-full bg-green-light flex items-center justify-center shrink-0 [transform:translateZ(15px)]">
-                {feature.icon}
-              </div>
+        {/* Right Side: Horizontal scrolling track wrapper */}
+        <div className="w-full md:w-[65%] lg:w-[70%] h-full flex items-center overflow-x-hidden relative md:pl-12 py-10 md:py-0">
+          <div
+            ref={trackRef}
+            className="flex gap-8 items-center px-4 md:px-0 overflow-x-visible whitespace-nowrap md:whitespace-normal [perspective:1200px]"
+          >
+            {FEATURES.map((feature, idx) => (
+              <div
+                key={idx}
+                onMouseMove={(e) => handleMouseMove(e, e.currentTarget)}
+                onMouseLeave={(e) => handleMouseLeave(e, e.currentTarget)}
+                className="gsap-horizontal-card inline-block md:block w-[300px] sm:w-[340px] md:w-[385px] bg-white border border-[#E4EAE4] rounded-[24px] p-8 md:p-10 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-colors duration-300 hover:border-green-accent flex-col items-start gap-6 cursor-pointer shrink-0 will-change-transform [transform-style:preserve-3d]"
+              >
+                {/* Icon Circle Container */}
+                <div className="w-12 h-12 rounded-full bg-green-light flex items-center justify-center shrink-0 mb-6 [transform:translateZ(15px)]">
+                  {feature.icon}
+                </div>
 
-              {/* Text Block */}
-              <div className="flex-1 text-left [transform:translateZ(10px)]">
-                <h3 className="font-display font-normal text-[21px] text-text-primary mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-[14.5px] text-text-secondary leading-relaxed font-light">
-                  {feature.body}
-                </p>
+                {/* Text Block */}
+                <div className="text-left [transform:translateZ(10px)] whitespace-normal">
+                  <h3 className="font-display font-normal text-[22px] md:text-[24px] text-text-primary mb-3">
+                    {feature.title}
+                  </h3>
+                  <p className="text-[14px] md:text-[15px] text-text-secondary leading-relaxed font-light">
+                    {feature.body}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
       </div>
