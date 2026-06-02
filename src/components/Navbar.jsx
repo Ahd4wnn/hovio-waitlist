@@ -44,7 +44,7 @@ export default function Navbar() {
       <div className="max-width-container h-full flex items-center justify-between">
         {/* Left: Branding & Custom Logo Image */}
         <a href="/" className="flex items-center gap-2 group">
-          <div className="relative w-8 h-8 flex items-center justify-center overflow-hidden rounded-[8px] shadow-sm border border-border">
+          <div className="relative w-8 h-8 flex items-center justify-center overflow-hidden rounded-[8px] shadow-sm">
             <img 
               src="/logo.jpg" 
               alt="Hovio Logo" 
