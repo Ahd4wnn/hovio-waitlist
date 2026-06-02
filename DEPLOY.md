@@ -27,12 +27,14 @@ ALTER TABLE public.waitlist ENABLE ROW LEVEL SECURITY;
 
 -- 3. Create RLS Policies
 -- Policy to allow anyone to sign up (anonymous/public INSERT)
+DROP POLICY IF EXISTS "Allow public insert to waitlist" ON public.waitlist;
 CREATE POLICY "Allow public insert to waitlist" 
 ON public.waitlist 
 FOR INSERT 
 WITH CHECK (true);
 
 -- Policy to block public reading of waitlist emails (protect user privacy)
+DROP POLICY IF EXISTS "Prevent public select from waitlist" ON public.waitlist;
 CREATE POLICY "Prevent public select from waitlist"
 ON public.waitlist
 FOR SELECT
@@ -72,6 +74,7 @@ CREATE INDEX IF NOT EXISTS therapist_interest_created_at_idx
 ALTER TABLE public.therapist_interest ENABLE ROW LEVEL SECURITY;
 
 -- Allow public therapist inserts
+DROP POLICY IF EXISTS "Allow public therapist inserts" ON public.therapist_interest;
 CREATE POLICY "Allow public therapist inserts"
   ON public.therapist_interest
   FOR INSERT
@@ -79,6 +82,7 @@ CREATE POLICY "Allow public therapist inserts"
   WITH CHECK (true);
 
 -- Deny public therapist reads
+DROP POLICY IF EXISTS "Deny public therapist reads" ON public.therapist_interest;
 CREATE POLICY "Deny public therapist reads"
   ON public.therapist_interest
   FOR SELECT
